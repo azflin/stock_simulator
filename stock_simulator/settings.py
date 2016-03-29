@@ -52,7 +52,7 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'stock_simulator_project.urls'
+ROOT_URLCONF = 'stock_simulator.urls'
 
 TEMPLATES = [
     {
@@ -70,7 +70,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'stock_simulator_project.wsgi.application'
+WSGI_APPLICATION = 'stock_simulator.wsgi.application'
 
 
 # Database
