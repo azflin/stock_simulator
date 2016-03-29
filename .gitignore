@@ -1,5 +1,15 @@
-.idea/
-db.sqlite3
+# SQLite3 database
+*.sqlite3
+
+# Python compiled byte code
 *.pyc
+
+# Static Files
 staticfiles/
+
+# Bower Components
+static/bower_components/
+
+# Misc
 .DS_Store
+.idea/
