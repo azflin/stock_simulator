@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html ng-app="stock_simulator">
 <head>
-    <meta charset="UTF-8">
     <title>Stock Simulator</title>
+    <base href="/" />
     {% include 'stylesheets.html' %}
 </head>
-<body ng-controller="TestController as test">
-    <button type="button" class="btn btn-default" ng-click="click_alert()">Default</button>
-    {% verbatim %}
-    {{ message }}
-    {% endverbatim %}
-    {% include 'javascripts.html' %}
+<body>
+  {% include 'navbar.html' %}
+
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 ng-view"></div>
+    </div>
+  </div>
+
+  {% include 'javascripts.html' %}
 </body>
 </html>

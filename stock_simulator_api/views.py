@@ -2,22 +2,13 @@ from rest_framework import viewsets, permissions, generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
-from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 
 from stock_simulator_api.models import Portfolio, Quote, Transaction, Stock
 from stock_simulator_api.permissions import IsOwnerOrReadOnly
 from serializers import QuoteSerializer, TransactionSerializer, StockSerializer
 
-from serializers import UserSerializer, PortfolioSerializer
-
-
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    The users for this app. Supports GET list, GET individual.
-    """
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+from serializers import PortfolioSerializer
 
 
 class PortfolioViewSet(viewsets.ModelViewSet):
