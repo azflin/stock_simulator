@@ -1,11 +1,8 @@
 <nav class="navbar navbar-default">
   <div class="container">
     <div class="navbar-header">
-      <a class="navbar-brand" href="#">Stock Simulator</a>
+      <a class="navbar-brand" href="/#/">Stock Simulator</a>
     </div>
-    <ul class="nav navbar-nav">
-      <li><a href="#">Home</a></li>
-    </ul>
     <ul class="nav navbar-nav pull-right">
       {% if user.is_authenticated %}
         <li><a href="javascript:void(0)">{{ user.username }}</a></li>

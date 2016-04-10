@@ -6,7 +6,7 @@
 	angular.module('authentication', [])
 
 		//Register Controller
-		.controller('RegisterController', ['$scope', 'register', function($scope, register){
+		.controller('RegisterController', ['$scope', 'register', function ($scope, register) {
 			$scope.register = function(){
 				if ($scope.password == $scope.confirm_password) {
 					register(
@@ -22,15 +22,15 @@
 			};
 
 			//Helper register success/error functions
-			function registerSuccessFn(response){
+			function registerSuccessFn (response) {
 				window.location = '/';
 			}
-			function registerErrorFn(response){
+			function registerErrorFn (response) {
 				$scope.error_messages = response.data;
 			}
 		}])
 		//Register service
-		.factory('register', ['$http', function($http) {
+		.factory('register', ['$http', function ($http) {
 			return function(username, email, password) {
 				return $http.post('/api/register/', {
 					username: username,
@@ -41,7 +41,7 @@
 		}])
 
 		//Login Controller
-		.controller('LoginController', ['$scope', 'login', function($scope, login) {
+		.controller('LoginController', ['$scope', 'login', function ($scope, login) {
 			$scope.login = function() {
 				login($scope.username, $scope.password)
 					.then(loginSuccessFn, loginErrorFn);
@@ -56,7 +56,7 @@
 			}
 		}])
 		//Login Service
-		.factory('login', ['$http', function($http) {
+		.factory('login', ['$http', function ($http) {
 			return function(username, password) {
 				return $http.post('/api/login/', {
 					username: username,
@@ -66,18 +66,19 @@
 		}])
 
 		//Logout Controller
-		.controller('LogoutController', ['$scope', 'logout', function($scope, logout) {
+		.controller('LogoutController', ['$scope', 'logout', function ($scope, logout) {
 			$scope.logout = logout;
 		}])
 		//Logout Service
-		.factory('logout', ['$http', function($http) {
+		.factory('logout', ['$http', function ($http) {
 
 			//Helper logout success/error functions
 			function logoutSuccessFn(response){
-				window.location ='/';
+				window.location ='/#/home';
+				window.location.reload();
 			}
 
-			return function(){
+			return function () {
 				$http.post('/api/logout/')
 					.then(logoutSuccessFn);
 			};
