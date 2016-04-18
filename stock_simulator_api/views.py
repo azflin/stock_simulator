@@ -3,11 +3,11 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User
 
 from stock_simulator_api.models import Portfolio, Quote, Transaction, Stock
 from stock_simulator_api.permissions import IsOwnerOrReadOnly
 from serializers import QuoteSerializer, TransactionSerializer, StockSerializer
-
 from serializers import PortfolioSerializer
 
 
@@ -26,10 +26,15 @@ class PortfolioViewSet(viewsets.ModelViewSet):
 
     # Filtering against current user
     def get_queryset(self):
-        if self.request.user.is_authenticated():
-            return Portfolio.objects.filter(owner=self.request.user)
-        else:
-            return []
+        username = self.request.query_params.get('username', None)
+        if not username:
+            raise ValidationError("Must supply username.")
+        user = User.objects.filter(username=username)
+        if user:
+            return Portfolio.objects.filter(owner=user)
+        else:  # No such user exists
+            raise ValidationError("No such user exists.")
+
 
 
 class TransactionsList(generics.ListCreateAPIView):
