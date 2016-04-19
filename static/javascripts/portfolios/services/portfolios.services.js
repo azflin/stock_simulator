@@ -12,8 +12,8 @@
 
 			return Portfolios;
 
-			function all () {
-				return $http.get('/api/portfolios/');
+			function all (username) {
+				return $http.get('/api/portfolios/?username=' + username);
 			}
 
 			function create (name) {

@@ -28,12 +28,12 @@ class PortfolioViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         username = self.request.query_params.get('username', None)
         if not username:
-            raise ValidationError("Must supply username.")
+            raise ValidationError({"detail": "No username get parameter provided."})
         user = User.objects.filter(username=username)
         if user:
             return Portfolio.objects.filter(owner=user)
         else:  # No such user exists
-            raise ValidationError("No such user exists.")
+            raise ValidationError({"detail": "No such user exists."})
 
 
 
