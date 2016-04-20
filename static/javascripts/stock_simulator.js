@@ -5,7 +5,7 @@
 		.module('stock_simulator', [
 			'stock_simulator.routes',
 			'stock_simulator.portfolios',
-			'authentication'
+			'stock_simulator.authentication'
 		])
 
 		// Provide CSRF Token for Django's unsafe methods

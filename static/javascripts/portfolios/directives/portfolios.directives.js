@@ -9,7 +9,7 @@
 				//scope: {
 				//	portfolio: '='
 				//},
-				templateUrl: '/static/templates/portfolios/portfolio.html'
+				templateUrl: '/static/templates/portfolios/portfolio_snapshot.html'
 			};
 			return directive;
 		});

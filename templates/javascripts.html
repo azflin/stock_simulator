@@ -1,14 +1,24 @@
 {% load staticfiles %}
 
+{# External library Javascripts #}
 <script type="text/javascript" src="{% static 'bower_components/jquery/dist/jquery.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular/angular.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-route/angular-route.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/bootstrap/dist/js/bootstrap.js' %}"></script>
 
+{# Stock Simulator Javascripts #}
 <script type="text/javascript" src="{% static 'javascripts/stock_simulator.js' %}"></script>
 <script type="text/javascript" src="{% static 'javascripts/stock_simulator.routes.js' %}"></script>
-<script type="text/javascript" src="{% static 'javascripts/authentication.js' %}"></script>
+
+{# Authentication Javascripts #}
+<script type="text/javascript" src="{% static 'javascripts/authentication/authentication.module.js' %}"></script>
+<script type="text/javascript" src="{% static 'javascripts/authentication/services/authentication.services.js' %}"></script>
+<script type="text/javascript" src="{% static 'javascripts/authentication/controllers/login.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'javascripts/authentication/controllers/logout.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'javascripts/authentication/controllers/register.controller.js' %}"></script>
+
+{# Portfolios Javascripts #}
 <script type="text/javascript" src="{% static 'javascripts/portfolios/portfolios.module.js' %}"></script>
 <script type="text/javascript" src="{% static 'javascripts/portfolios/controllers/portfolios.controllers.js' %}"></script>
 <script type="text/javascript" src="{% static 'javascripts/portfolios/services/portfolios.services.js' %}"></script>
