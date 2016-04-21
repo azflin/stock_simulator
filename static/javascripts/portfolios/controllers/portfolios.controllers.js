@@ -3,10 +3,16 @@
 
 	angular
 		.module('stock_simulator.portfolios.controllers', [])
-		.controller('PortfoliosIndexController', ['$scope', '$routeParams', 'Portfolios',
-			function ($scope, $routeParams, Portfolios) {
+		.controller('PortfoliosIndexController', ['$scope', '$routeParams', 'Portfolios', 'Authentication',
+			function ($scope, $routeParams, Portfolios, Authentication) {
 				$scope.userID = $routeParams.userID;
 				$scope.portfolios = [];
+				//$scope.isPageOwner triggers ng-show for create and delete portfolio buttons
+				if (Authentication.getAuthenticatedAccount().username == $scope.userID) {
+					$scope.isPageOwner = true;
+				}
+
+				// Functions to create and delete portfolios
 				$scope.createPortfolio = function () {
 					Portfolios.create($scope.portfolioName)
 						.then(createPortfolioSuccessFn, createPortfolioErrorFn);
@@ -17,6 +23,7 @@
 					});
 				};
 
+				// Load page with portfolios belonging to userID
 				initialize($routeParams.userID);
 
 				function initialize(username) {

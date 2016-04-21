@@ -3,7 +3,7 @@
 
 	angular
 		.module('stock_simulator.portfolios.services', [])
-		.factory('Portfolios', ['$http', function ($http) {
+		.factory('Portfolios', ['$http', 'Authentication', function ($http, Authentication) {
 			var Portfolios = {
 				all: all,
 				create: create,
@@ -23,7 +23,8 @@
 			}
 
 			function deletePortfolio (portfolio_id) {
-				return $http.delete('/api/portfolios/' + portfolio_id);
+				return $http.delete('/api/portfolios/' + portfolio_id +
+					'/?username=' + Authentication.getAuthenticatedAccount().username);
 			}
 		}]);
 })();

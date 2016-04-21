@@ -11,8 +11,9 @@
 				};
 				//Helper login success/error functions
 				function loginSuccessFn(response){
-					console.log(response.data);
-					window.location = '/#/';
+					Authentication.setAuthenticatedAccount(response.data);
+					window.location = '/#/users/' + response.data.username;
+					window.location.reload();
 				}
 				function loginErrorFn(response){
 					$scope.login_error = 'Incorrect username/password combination.';

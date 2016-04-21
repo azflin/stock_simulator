@@ -20,8 +20,13 @@
 				};
 
 				//Helper register success/error functions
-				function registerSuccessFn(response) {
-					window.location = '/';
+				function registerSuccessFn() {
+					Authentication.login($scope.username, $scope.password)
+						.then(function (response) {
+							Authentication.setAuthenticatedAccount(response.data);
+							window.location = '/#/users/' + response.data.username;
+							window.location.reload();
+						});
 				}
 				function registerErrorFn(response) {
 					$scope.error_messages = response.data;

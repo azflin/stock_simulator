@@ -7,7 +7,10 @@
 			var Authentication = {
 				register: register,
 				login: login,
-				logout: logout
+				logout: logout,
+				setAuthenticatedAccount: setAuthenticatedAccount,
+				unauthenticate: unauthenticate,
+				getAuthenticatedAccount: getAuthenticatedAccount
 			};
 
 			return Authentication;
@@ -32,8 +35,25 @@
 					.then(logoutSuccessFn);
 
 				function logoutSuccessFn(response){
+					unauthenticate();
 					window.location ='/#/home';
 					window.location.reload();
+				}
+			}
+
+			function setAuthenticatedAccount(account) {
+				$cookies.authenticatedAccount = JSON.stringify(account);
+			}
+
+			function unauthenticate() {
+				delete $cookies.authenticatedAccount;
+			}
+
+			function getAuthenticatedAccount() {
+				if ($cookies.authenticatedAccount) {
+					return JSON.parse($cookies.authenticatedAccount);
+				} else {
+					return '';
 				}
 			}
 		}]);

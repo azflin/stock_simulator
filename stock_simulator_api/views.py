@@ -13,7 +13,8 @@ from serializers import PortfolioSerializer
 
 class PortfolioViewSet(viewsets.ModelViewSet):
     """
-    The portfolios attached to your account. Supports POST, GET list, GET individual.
+    The portfolios belonging to an account provided by username get parameter.
+    Supports POST, GET list, GET individual.
     """
     queryset = Portfolio.objects.all()
     serializer_class = PortfolioSerializer
