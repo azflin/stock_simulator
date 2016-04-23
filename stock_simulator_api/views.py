@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 
 from stock_simulator_api.models import Portfolio, Quote, Transaction, Stock
-from stock_simulator_api.permissions import IsOwnerOrReadOnly
+from stock_simulator_api.permissions import IsOwnerOrReadOnly, IsPortfolioOwnerOrReadOnly
 from serializers import QuoteSerializer, TransactionSerializer, StockSerializer
 from serializers import PortfolioSerializer
 
@@ -44,6 +44,7 @@ class TransactionsList(generics.ListCreateAPIView):
     The transactions attached to its portfolio. Supports POST, and GET list.
     """
     serializer_class = TransactionSerializer
+    permission_classes = (IsPortfolioOwnerOrReadOnly, )
 
     def get_queryset(self):
         p = get_object_or_404(Portfolio, id=self.kwargs['portfolio_id'])

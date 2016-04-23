@@ -1,4 +1,7 @@
 from rest_framework import permissions
+from rest_framework.permissions import SAFE_METHODS
+
+from stock_simulator_api.models import Portfolio
 
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
@@ -14,3 +17,18 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 
         # Write permissions are only allowed to the owner of the snippet.
         return obj.owner == request.user
+
+
+class IsPortfolioOwnerOrReadOnly(permissions.BasePermission):
+    """
+    Custom permission to only allow owners of a portfolio to post transactions to it.
+    """
+
+    def has_permission(self, request, view):
+        if request.method in SAFE_METHODS:
+            return True
+        else:
+            portfolio = Portfolio.objects.get(pk=int(view.kwargs['portfolio_id']))
+            user = portfolio.owner
+            if user == request.user:
+                return True
