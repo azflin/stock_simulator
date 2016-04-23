@@ -2,7 +2,7 @@
 	'use strict';
 
 	angular
-		.module('stock_simulator.portfolios.controllers', [])
+		.module('stock_simulator.portfolios.controllers')
 		.controller('PortfoliosIndexController', ['$scope', '$routeParams', 'Portfolios', 'Authentication',
 			function ($scope, $routeParams, Portfolios, Authentication) {
 				$scope.userID = $routeParams.userID;

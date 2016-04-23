@@ -2,7 +2,7 @@
 	'use strict';
 
 	angular
-		.module('stock_simulator.portfolios.directives', [])
+		.module('stock_simulator.portfolios.directives')
 		.directive('portfolioSnapshot', function () {
 			var directive = {
 				restrict: 'E',

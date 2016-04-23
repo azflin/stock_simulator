@@ -2,7 +2,7 @@
 	'use strict';
 
 	angular
-		.module('stock_simulator.portfolios.services', [])
+		.module('stock_simulator.portfolios.services')
 		.factory('Portfolios', ['$http', 'Authentication', function ($http, Authentication) {
 			var Portfolios = {
 				all: all,

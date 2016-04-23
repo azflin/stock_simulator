@@ -18,14 +18,16 @@ class PortfolioViewSet(viewsets.ModelViewSet):
     """
     queryset = Portfolio.objects.all()
     serializer_class = PortfolioSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
-                          IsOwnerOrReadOnly,)
+    permission_classes = (
+        permissions.IsAuthenticatedOrReadOnly,  # Unauthenticated users cannot POST
+        IsOwnerOrReadOnly  # Authenticated users that don't own portfolio cannot edit it
+    )
 
     # Request's user is saved as owner of portfolio
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
-    # Filtering against current user
+    # Get portfolios belonging to the username given in username get parameter
     def get_queryset(self):
         username = self.request.query_params.get('username', None)
         if not username:
@@ -35,7 +37,6 @@ class PortfolioViewSet(viewsets.ModelViewSet):
             return Portfolio.objects.filter(owner=user)
         else:  # No such user exists
             raise ValidationError({"detail": "No such user exists."})
-
 
 
 class TransactionsList(generics.ListCreateAPIView):
@@ -49,7 +50,6 @@ class TransactionsList(generics.ListCreateAPIView):
         return Transaction.objects.filter(portfolio=p)
 
     def perform_create(self, serializer):
-        # Get URL parameter and query parameters
         portfolio = get_object_or_404(Portfolio, id=self.kwargs['portfolio_id'])
         ticker = self.request.data['ticker'].upper()
         quantity = int(self.request.data['quantity'])
@@ -106,7 +106,6 @@ class TransactionsList(generics.ListCreateAPIView):
                         portfolio.name
                     )
                 )
-
         serializer.save(ticker=ticker, portfolio=portfolio, price=quote.last_trade_price_only)
 
 
