@@ -6,6 +6,7 @@
 		.factory('Portfolios', ['$http', 'Authentication', function ($http, Authentication) {
 			var Portfolios = {
 				getAllPortfolios: getAllPortfolios,
+				getOnePortfolio: getOnePortfolio,
 				createPortfolio: createPortfolio,
 				deletePortfolio: deletePortfolio
 			};
@@ -14,6 +15,10 @@
 
 			function getAllPortfolios(username) {
 				return $http.get('/api/portfolios/?username=' + username);
+			}
+
+			function getOnePortfolio(username, portfolioID) {
+				return $http.get('/api/portfolios/' + portfolioID + '/?username=' + username);
 			}
 
 			function createPortfolio(name) {

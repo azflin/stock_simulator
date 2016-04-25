@@ -8,7 +8,7 @@
 				controller: 'PortfolioIndexController',
 				templateUrl: '/static/templates/portfolios/index.html',
 			}).when('/users/:userID/:portfolioID', {
-				controller: 'PortfoliosDetailController',
+				controller: 'PortfolioDetailController',
 				templateUrl: '/static/templates/portfolios/detail.html',
 			}).when('/home', {
 				templateUrl: '/static/templates/home.html',
