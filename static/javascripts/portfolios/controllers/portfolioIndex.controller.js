@@ -3,7 +3,7 @@
 
 	angular
 		.module('stock_simulator.portfolios.controllers')
-		.controller('PortfoliosIndexController', ['$scope', '$routeParams', 'Portfolios', 'Authentication',
+		.controller('PortfolioIndexController', ['$scope', '$routeParams', 'Portfolios', 'Authentication',
 			function ($scope, $routeParams, Portfolios, Authentication) {
 				$scope.userID = $routeParams.userID;
 				$scope.portfolios = [];
@@ -14,7 +14,7 @@
 
 				// Functions to create and delete portfolios
 				$scope.createPortfolio = function () {
-					Portfolios.create($scope.portfolioName)
+					Portfolios.createPortfolio($scope.portfolioName)
 						.then(createPortfolioSuccessFn, createPortfolioErrorFn);
 				};
 				$scope.deletePortfolio = function (idx) {
@@ -27,7 +27,7 @@
 				initialize($routeParams.userID);
 
 				function initialize(username) {
-					Portfolios.all(username).then(initializeSuccessFn, initializeErrorFn);
+					Portfolios.getAllPortfolios(username).then(initializeSuccessFn, initializeErrorFn);
 				}
 
 				function initializeSuccessFn (response) {
