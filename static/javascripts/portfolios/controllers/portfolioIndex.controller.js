@@ -35,7 +35,7 @@
 				}
 
 				function initializeErrorFn (response) {
-					$scope.errorMessage = response.data['detail'];
+					$scope.errorMessage = true;
 				}
 
 				function createPortfolioSuccessFn (response) {

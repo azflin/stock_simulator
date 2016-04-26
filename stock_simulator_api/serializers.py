@@ -15,8 +15,8 @@ class PortfolioSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Portfolio
-        fields = ('id', 'name', 'cash', 'owner', 'stocks')
-        read_only_fields = ('cash', )
+        fields = ('id', 'name', 'cash', 'owner', 'stocks', 'created')
+        read_only_fields = ('cash', 'created')
 
 
 class TransactionSerializer(serializers.ModelSerializer):

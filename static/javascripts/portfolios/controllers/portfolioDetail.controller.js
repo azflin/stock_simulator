@@ -6,6 +6,8 @@
 		.controller('PortfolioDetailController', ['$scope', '$routeParams', 'Portfolios',
 			function ($scope, $routeParams, Portfolios) {
 
+				$scope.userID = $routeParams.userID;
+
 				// Load page with portfolio
 				initialize($routeParams.userID, $routeParams.portfolioID);
 
@@ -15,10 +17,12 @@
 				}
 
 				function initializeSuccessFn(response) {
+					$scope.portfolio = response.data;
 					console.log(response.data);
 				}
 
 				function initializeErrorFn(response) {
+					$scope.errorMessage = response.data;
 					console.log(response.data);
 				}
 			}
