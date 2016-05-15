@@ -3,6 +3,11 @@
     <div class="navbar-header">
       <a class="navbar-brand" href="/#/">Stock Simulator</a>
     </div>
+    <ul class="nav navbar-nav">
+      {% if user.is_authenticated %}
+        <li><a href="/#/users/{{ user.username }}">Home</a></li>
+      {% endif %}
+    </ul>
     <ul class="nav navbar-nav pull-right">
       {% if user.is_authenticated %}
         <li><a href="javascript:void(0)">{{ user.username }}</a></li>

@@ -32,6 +32,7 @@
 
 				function initializeSuccessFn (response) {
 					$scope.portfolios = response.data;
+					console.log(response.data);
 				}
 
 				function initializeErrorFn (response) {

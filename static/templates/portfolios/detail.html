@@ -1,47 +1,65 @@
-<div class="row">
-  <div class="col-xs-12" ng-show="!errorMessage">
-    <h1>{{ portfolio.name }} by {{ userID }}</h1>
-  </div>
-</div>
-<div class="row">
-  <div class="col-xs-4">
-    <h4>Overall Return:</h4>
-  </div>
-  <div class="col-xs-4">
-    <h4>Portfolio Value:</h4>
-  </div>
-  <div class="col-xs-4">
-    <h4>Creation Date:</h4>
-    <h4>{{ portfolio.created | date:'MM/dd/yyyy'}}</h4>
-  </div>
-</div>
-<div class="row">
-  <div class="col-xs-6">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">Holdings</h3>
-      </div>
-      <table class="table">
-        <thead>
-          <th>Ticker</th>
-          <th>Quantity</th>
-        </thead>
-        <tbody>
-          <tr ng-repeat="stock in portfolio.stocks">
-            <td>{{ stock.ticker }}</td>
-            <td>{{ stock.quantity }}</td>
-          </tr>
-        </tbody>
-      </table>
+<div ng-show="!errorMessage">
+  <!-- Main page header-->
+  <div class="row">
+    <div class="col-xs-12">
+      <h1>{{ portfolio.name }} by {{ userID }}</h1>
     </div>
   </div>
-  <div class="col-xs-6">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">Transactions</h3>
+  <div class="row">
+    <div class="col-xs-4">
+      <h4>Overall Return:</h4>
+    </div>
+    <div class="col-xs-4">
+      <h4>Portfolio Value:</h4>
+    </div>
+    <div class="col-xs-4">
+      <h4>Creation Date:</h4>
+      <h4>{{ portfolio.created | date:'MM/dd/yyyy'}}</h4>
+    </div>
+  </div>
+  <!-- Holdings-->
+  <div class="row">
+    <div class="col-xs-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Holdings</h3>
+        </div>
+        <table class="table">
+          <thead>
+            <th>Ticker</th>
+            <th>Quantity</th>
+          </thead>
+          <tbody>
+            <tr ng-repeat="stock in portfolio.stocks">
+              <td>{{ stock.ticker }}</td>
+              <td>{{ stock.quantity }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <div class="panel-body">
-        These r ma transactions.
+    </div>
+    <!-- Transactions-->
+    <div class="col-xs-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Transactions</h3>
+        </div>
+        <table class="table">
+          <thead>
+            <th>Ticker</th>
+            <th>Side</th>
+            <th>Quantity</th>
+            <th>Price</th>
+          </thead>
+          <tbody>
+            <tr ng-repeat="transaction in transactions">
+              <td>{{ transaction.ticker }}</td>
+              <td>{{ transaction.transaction_type }}</td>
+              <td>{{ transaction.quantity }}</td>
+              <td>{{ transaction.price }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
