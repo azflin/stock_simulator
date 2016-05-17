@@ -1,10 +1,32 @@
+<!-- Only show detail if no error message. Error message appears
+when someone navigates to invalid portfolioID. -->
 <div ng-show="!errorMessage">
   <!-- Main page header-->
   <div class="row">
     <div class="col-xs-12">
-      <h1>{{ portfolio.name }} by {{ userID }}</h1>
+      <h1 style="display: inline;">{{ portfolio.name }} by {{ userID }}</h1>
+      <!-- New Transaction button to trigger modal -->
+      <button type="button" class="btn btn-success pull-right" ng-show="isPageOwner" data-toggle="modal" data-target="#newTransactionModal">New Transaction</button>
     </div>
   </div>
+  <!-- New Transaction Modal -->
+  <div id="newTransactionModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Modal Header</h4>
+        </div>
+        <div class="modal-body">
+          <p>Some text in the modal.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Overall Return, Portfolio Value, and Creation Date row-->
   <div class="row">
     <div class="col-xs-4">
       <h4>Overall Return:</h4>
@@ -50,6 +72,7 @@
             <th>Side</th>
             <th>Quantity</th>
             <th>Price</th>
+            <th>Date</th>
           </thead>
           <tbody>
             <tr ng-repeat="transaction in transactions">
@@ -57,6 +80,7 @@
               <td>{{ transaction.transaction_type }}</td>
               <td>{{ transaction.quantity }}</td>
               <td>{{ transaction.price }}</td>
+              <td>{{ transaction.time | date:'MM/dd/yyyy H:mm'}}</td>
             </tr>
           </tbody>
         </table>

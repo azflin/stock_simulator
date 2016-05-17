@@ -1,3 +1,4 @@
+// Routes for the angularJS app
 (function () {
   'use strict';
 

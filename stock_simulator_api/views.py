@@ -48,7 +48,9 @@ class TransactionsList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         p = get_object_or_404(Portfolio, id=self.kwargs['portfolio_id'])
-        return Transaction.objects.filter(portfolio=p)
+        # Return transactions in reverse order to get most recent
+        # transactions first.
+        return Transaction.objects.filter(portfolio=p)[::-1]
 
     def perform_create(self, serializer):
         portfolio = get_object_or_404(Portfolio, id=self.kwargs['portfolio_id'])
