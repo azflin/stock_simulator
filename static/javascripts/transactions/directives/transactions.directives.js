@@ -7,12 +7,11 @@
 			var directive = {
 				restrict: 'E',
 				scope: {
-					userId: '@',
 					action: '&'
 				},
 				controller: function ($scope) {
 					$scope.alertBar = function () {
-						var text = 'swaggity';
+						var text = 'pussy';
 						$scope.action()(text);
 					};
 				},

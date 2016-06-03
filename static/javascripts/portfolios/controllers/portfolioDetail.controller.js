@@ -7,7 +7,7 @@
 			function ($scope, $routeParams, Portfolios, Transactions, Authentication) {
 
 				$scope.userID = $routeParams.userID;
-				//$scope.isPageOwner triggers ng-show for create and delete portfolio buttons
+				//$scope.isPageOwner triggers ng-show for new transaction button
 				if (Authentication.getAuthenticatedAccount().username == $scope.userID) {
 					$scope.isPageOwner = true;
 				}
