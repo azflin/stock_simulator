@@ -23,7 +23,7 @@
 			// Endpoint: /api/portfolios/:portfolioID/transactions/
 			function postTransaction(portfolioID, ticker, transactionType, quantity) {
 				return $http.post(
-					'/api/portfolios' + portfolioID + '/transactions/',
+					'/api/portfolios/' + portfolioID + '/transactions/',
 					{
 						ticker: ticker,
 						transaction_type: transactionType,

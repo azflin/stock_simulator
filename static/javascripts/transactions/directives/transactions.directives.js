@@ -7,13 +7,37 @@
 			var directive = {
 				restrict: 'E',
 				scope: {
-					action: '&'
+					portfolioId : '@'
 				},
-				controller: function ($scope) {
-					$scope.alertBar = function () {
-						var text = 'pussy';
-						$scope.action()(text);
+				controller: function ($scope, Transactions) {
+					$scope.postTransaction = function (transaction) {
+						$scope.status = 'pending';
+						Transactions.postTransaction(
+							$scope.portfolioId,
+							transaction.ticker,
+							transaction.side,
+							transaction.quantity
+						).then(postTransactionSuccessFn, postTransactionErrorFn);
 					};
+
+					function postTransactionSuccessFn(response) {
+						console.log(response.data);
+						$scope.status = 'success';
+						if (response.data.transaction_type == 'Buy') {
+							var side_verb = 'Bought ';
+						} else { // transaction_type == 'Sell'
+							var side_verb = 'Sold ';
+						}
+						$scope.alertMessage = side_verb + response.data.quantity + " units of " +
+							response.data.ticker + " @ $" + response.data.price.toFixed(2) + ", totalling $" +
+							(response.data.quantity * response.data.price).toFixed(2);
+					}
+
+					function postTransactionErrorFn(response) {
+						console.log(response.data);
+						$scope.status = 'failure';
+						$scope.alertMessage = response.data[0];
+					}
 				},
 				templateUrl: '/static/templates/transactions/new_transaction_modal.html'
 			};

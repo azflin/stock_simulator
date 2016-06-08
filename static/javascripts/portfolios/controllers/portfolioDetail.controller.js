@@ -33,10 +33,6 @@
 				function getTransactionsSuccessFn(response) {
 					$scope.transactions = response.data;
 				}
-
-				$scope.alertText = function (text) {
-					alert(text);
-				};
 			}
 		]);
 })();
