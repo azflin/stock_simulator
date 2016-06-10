@@ -7,7 +7,8 @@
 			var directive = {
 				restrict: 'E',
 				scope: {
-					portfolioId : '@'
+					portfolioId : '@',
+					initialize: '&'
 				},
 				controller: function ($scope, Transactions) {
 					$scope.postTransaction = function (transaction) {
@@ -21,11 +22,11 @@
 					};
 
 					function postTransactionSuccessFn(response) {
-						console.log(response.data);
+						$scope.initialize();
 						$scope.status = 'success';
 						if (response.data.transaction_type == 'Buy') {
 							var side_verb = 'Bought ';
-						} else { // transaction_type == 'Sell'
+						} else if (response.data.transaction_type == 'Sell') {
 							var side_verb = 'Sold ';
 						}
 						$scope.alertMessage = side_verb + response.data.quantity + " units of " +
@@ -34,7 +35,6 @@
 					}
 
 					function postTransactionErrorFn(response) {
-						console.log(response.data);
 						$scope.status = 'failure';
 						$scope.alertMessage = response.data[0];
 					}

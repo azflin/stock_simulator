@@ -4,24 +4,27 @@ when someone navigates to invalid portfolioID. -->
   <!-- Main page header-->
   <div class="row">
     <div class="col-xs-12">
-      <h1 style="display: inline;">{{ portfolio.name }} by {{ userID }}</h1>
+      <h1 style="display: inline;">{{ portfolio.name }}</h1>
+      <h4 style="display: inline;">, by {{ userID }} on {{ portfolio.created | date:'MM/dd/yyyy'}}</h4>
       <!-- New Transaction button to trigger modal -->
       <button type="button" class="btn btn-success pull-right" ng-show="isPageOwner" data-toggle="modal" data-target="#newTransactionModal">New Transaction</button>
     </div>
   </div>
-  <!-- New Transaction Modal -->
-  <new-transaction-modal portfolio-id="{{ portfolio.id }}"></new-transaction-modal>
+  <!-- New Transaction Modal directive-->
+  <new-transaction-modal portfolio-id="{{ portfolio.id }}"
+                         initialize="initialize()">
+  </new-transaction-modal>
   <!-- Overall Return, Portfolio Value, and Creation Date row-->
   <div class="row">
     <div class="col-xs-4">
       <h4>Overall Return:</h4>
     </div>
     <div class="col-xs-4">
-      <h4>Portfolio Value:</h4>
+      <h4>Cash:</h4>
+      <h4>${{ portfolio.cash }}</h4>
     </div>
     <div class="col-xs-4">
-      <h4>Creation Date:</h4>
-      <h4>{{ portfolio.created | date:'MM/dd/yyyy'}}</h4>
+      <h4>Portfolio Value:</h4>
     </div>
   </div>
   <!-- Holdings-->
