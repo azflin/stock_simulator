@@ -7,7 +7,9 @@ router.register(r'portfolios', views.PortfolioViewSet)
 
 urlpatterns = [
     url(r'^', include(router.urls)),
-    url(r'^quote/(?P<ticker>.*)/$', views.quote_get),
+    #url(r'^quote/(?P<ticker>.*)/$', views.quote_get),
+    # Comma separated alphabetic strings representing a list of tickers
+    url(r'^quote/(?P<tickers>[a-zA-Z]+(,[a-zA-Z]+)*)/$', views.get_quotes),
     url(r'^portfolios/(?P<portfolio_id>[0-9]+)/transactions/$',
         views.TransactionsList.as_view(),
         name='portfolio-transactions'),
