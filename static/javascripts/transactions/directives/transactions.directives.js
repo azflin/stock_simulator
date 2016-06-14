@@ -10,7 +10,8 @@
 					portfolioId : '@',
 					initialize: '&'
 				},
-				controller: function ($scope, Transactions) {
+				controller: function ($scope, $http, Transactions) {
+					// call postTransaction on New Transaction submit.
 					$scope.postTransaction = function (transaction) {
 						$scope.status = 'pending';
 						Transactions.postTransaction(
@@ -36,7 +37,34 @@
 
 					function postTransactionErrorFn(response) {
 						$scope.status = 'failure';
-						$scope.alertMessage = response.data[0];
+						$scope.alertMessage = response.data;
+					}
+
+					// Call getQuote on key press of ticker input box.
+					$scope.getQuote = function (ticker) {
+						// To account for empty ticker input. Clear scope's quote.
+						if (!ticker) {
+							$scope.quote = null;
+						} else {
+							$http.get('/api/quote/' + ticker).then(
+								function (response) {
+									// If an empty object is returned, it means invalid yahoo finance ticker.
+									if (Object.keys(response.data).length == 0) {
+										$scope.quote = { errorMessage: "Invalid ticker." };
+									} else {
+										$scope.quote = response.data[ticker.toUpperCase()];
+										//$scope.quoteStyle will be passed into ng-style for certain tags
+										$scope.quoteStyle = {};
+										// Make positive price changes green and negative changes red
+										if ($scope.quote.change >= 0) {
+											$scope.quoteStyle.color = "green";
+										} else if ($scope.quote.change < 0) {
+											$scope.quoteStyle.color = "red";
+										}
+									}
+								}
+							);
+						}
 					}
 				},
 				templateUrl: '/static/templates/transactions/new_transaction_modal.html'

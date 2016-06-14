@@ -22,11 +22,61 @@
         <form>
           <div class="form-group">
             <label>Ticker</label>
-            <input type="text" class="form-control" ng-model="transaction.ticker">
+            <input type="text"
+                   class="form-control"
+                   ng-model="transaction.ticker"
+                   ng-keyup="getQuote(transaction.ticker)">
+          </div>
+          <!-- Quote information -->
+          <div class="well" ng-show="quote">
+            <div class="row">
+              <div class="col-xs-6">
+                <!-- Invalid ticker error message. -->
+                <div class="row" ng-show="quote.errorMessage">
+                  <div class="col-xs-12">
+                    <h4 style="margin-top: 0; color: red;">{{ quote.errorMessage }}</h4>
+                  </div>
+                </div>
+                <!-- Stock name and ticker-->
+                <div class="row">
+                  <div class="col-xs-12">
+                    <div><strong>{{ quote.name }}</strong></div>
+                    <h1 style="margin-top: 0; margin-bottom: 0;">{{ transaction.ticker }}</h1>
+                  </div>
+                </div>
+                <!-- Stock price, change, and change percent-->
+                <div class="row" ng-show="quote.price">
+                  <div class="col-xs-6">
+                    <h1 style="margin-top: 0; margin-bottom: 0; color: black">{{ quote.price }}</h1>
+                  </div>
+                  <div class="col-xs-6">
+                    <h4 style="margin-top: 0; margin-bottom: 0;">
+                      <span ng-style="quoteStyle">
+                        <span ng-show="quote.change > 0">+</span>
+                        {{ quote.change }}
+                      </span>
+                    </h4>
+                    <h4 ng-style="quoteStyle" style="margin-top: 0; margin-bottom: 0;">
+                      ({{ quote.change_percent }}%)
+                    </h4>
+                  </div>
+                </div>
+              </div>
+              <!-- Volume, day range, and year range-->
+              <div class="col-xs-6" ng-show="quote.price">
+                <div class="row">
+                  <div><strong>Volume:</strong> {{ quote.volume | number }}</div>
+                  <div><strong>Day Range:</strong> {{ quote.day_low }} - {{ quote.day_high }}</div>
+                  <div><strong>Year Range:</strong> {{ quote.year_low }} - {{ quote.year_high }}</div>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="form-group">
             <label>Side</label>
-            <select class="form-control" ng-init="transaction.side='Buy'" ng-model="transaction.side">
+            <select class="form-control"
+                    ng-init="transaction.side='Buy'"
+                    ng-model="transaction.side">
               <option>Buy</option>
               <option selected>Sell</option>
             </select>

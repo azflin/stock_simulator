@@ -7,7 +7,11 @@ when someone navigates to invalid portfolioID. -->
       <h1 style="display: inline;">{{ portfolio.name }}</h1>
       <h4 style="display: inline;">, by {{ userID }} on {{ portfolio.created | date:'MM/dd/yyyy'}}</h4>
       <!-- New Transaction button to trigger modal -->
-      <button type="button" class="btn btn-success pull-right" ng-show="isPageOwner" data-toggle="modal" data-target="#newTransactionModal">New Transaction</button>
+      <button type="button"
+              class="btn btn-success pull-right"
+              ng-show="isPageOwner"
+              data-toggle="modal"
+              data-target="#newTransactionModal">New Transaction</button>
     </div>
   </div>
   <!-- New Transaction Modal directive-->
@@ -18,13 +22,15 @@ when someone navigates to invalid portfolioID. -->
   <div class="row">
     <div class="col-xs-4">
       <h4>Overall Return:</h4>
+      <h4 ng-style="portfolio.style">{{ portfolio.overallReturn }}%</h4>
     </div>
     <div class="col-xs-4">
       <h4>Cash:</h4>
-      <h4>${{ portfolio.cash }}</h4>
+      <h4>${{ portfolio.cash | number }}</h4>
     </div>
     <div class="col-xs-4">
-      <h4>Portfolio Value:</h4>
+      <h4>Market Value:</h4>
+      <h4>${{ portfolio.marketValue | number }}</h4>
     </div>
   </div>
   <!-- Holdings-->
@@ -38,11 +44,13 @@ when someone navigates to invalid portfolioID. -->
           <thead>
             <th>Ticker</th>
             <th>Quantity</th>
+            <th>Price</th>
           </thead>
           <tbody>
             <tr ng-repeat="stock in portfolio.stocks">
               <td>{{ stock.ticker }}</td>
               <td>{{ stock.quantity }}</td>
+              <td>{{ stock.price }}</td>
             </tr>
           </tbody>
         </table>
@@ -79,6 +87,8 @@ when someone navigates to invalid portfolioID. -->
 <div class="row">
   <!-- Error message goes here.-->
   <div class="col-md-12" ng-show="errorMessage">
-    <h3><span class="glyphicon glyphicon-remove-circle"></span> Error: This portfolio could not be found.</h3>
+    <h3><span class="glyphicon glyphicon-remove-circle"></span>
+      Error: This portfolio could not be found.
+    </h3>
   </div>
 </div>
