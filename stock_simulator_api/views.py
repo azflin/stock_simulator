@@ -2,16 +2,42 @@ import requests
 
 from rest_framework import viewsets, permissions, generics
 from rest_framework.decorators import api_view
-from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 
-from stock_simulator_api.models import Portfolio, Quote, Transaction, Stock
+from stock_simulator_api.models import Portfolio, Transaction, Stock
 from stock_simulator_api.permissions import IsOwnerOrReadOnly, IsPortfolioOwnerOrReadOnly
-from serializers import QuoteSerializer, TransactionSerializer, StockSerializer
+from serializers import TransactionSerializer, StockSerializer
 from serializers import PortfolioSerializer
+
+
+def get_yahoo_quote(tickers):
+    """
+    get_yahoo_quote returns stock quote information from yahoo finance's webservice on the
+    supplied tickers.
+
+    :param tickers: string of comma separated tickers
+    :return dict where key is string ticker and value is dict of ticker's quote info
+    """
+    url_query = "https://finance.yahoo.com/webservice/v1/symbols/{}/quote?format=json&view=detail"
+    yahoo_quotes_response = requests.get(url_query.format(tickers)).json()
+    quotes_to_return = {}
+    for quote in yahoo_quotes_response['list']['resources']:
+        ticker_dict = quote['resource']['fields']
+        quotes_to_return[ticker_dict['symbol']] = {
+            'change': round(float(ticker_dict['change']), 2),
+            'change_percent': round(float(ticker_dict['chg_percent']), 2),
+            'day_high': round(float(ticker_dict['day_high']), 2),
+            'day_low': round(float(ticker_dict['day_low']), 2),
+            'name': ticker_dict['name'],
+            'price': round(float(ticker_dict['price']), 2),
+            'volume': int(ticker_dict['volume']),
+            'year_high': round(float(ticker_dict['year_high']), 2),
+            'year_low': round(float(ticker_dict['year_low']), 2)
+        }
+    return quotes_to_return
 
 
 class PortfolioViewSet(viewsets.ModelViewSet):
@@ -61,7 +87,7 @@ class TransactionsList(generics.ListCreateAPIView):
         quantity = int(self.request.data['quantity'])
         transaction_type = self.request.data['transaction_type']
 
-        quote = requests.get("/api/quote/" + ticker).json()
+        quote = get_yahoo_quote(ticker)
         transaction_amount = quantity * quote[ticker]['price']
         if transaction_type == 'Buy':
             # Check if portfolio has sufficient funds to execute transaction
@@ -112,7 +138,7 @@ class TransactionsList(generics.ListCreateAPIView):
                         portfolio.name
                     )
                 )
-        serializer.save(ticker=ticker, portfolio=portfolio, price=quote.last_trade_price_only)
+        serializer.save(ticker=ticker, portfolio=portfolio, price=quote[ticker]['price'])
 
 
 class StocksList(generics.ListAPIView):
@@ -124,19 +150,6 @@ class StocksList(generics.ListAPIView):
     def get_queryset(self):
         p = get_object_or_404(Portfolio, id=self.kwargs['portfolio_id'])
         return Stock.objects.filter(portfolio=p)
-
-
-@api_view(['GET'])
-def quote_get(request, ticker):
-    """
-    Get a quote from yahoo finance's API.
-    """
-    try:
-        quote = Quote(ticker)
-        serializer = QuoteSerializer(quote)
-        return Response(serializer.data)
-    except Quote.InvalidTickerException:
-        return Response({"Error": "This ticker does not exist in Yahoo Finance."})
 
 
 @api_view(['GET'])
@@ -152,42 +165,6 @@ def get_quotes(request, tickers):
     of pricing data
     """
 
-    # This URL is a yahoo finance web service providing quotes for a list of tickers
-    url_query = "https://finance.yahoo.com/webservice/v1/symbols/{}/quote?format=json&view=detail"
-    yahoo_quotes_response = requests.get(url_query.format(tickers)).json()
-    quotes_to_return = {}
-    for quote in yahoo_quotes_response['list']['resources']:
-        ticker_dict = quote['resource']['fields']
-        quotes_to_return[ticker_dict['symbol']] = {
-            'change': round(float(ticker_dict['change']), 2),
-            'change_percent': round(float(ticker_dict['chg_percent']), 2),
-            'day_high': round(float(ticker_dict['day_high']), 2),
-            'day_low': round(float(ticker_dict['day_low']), 2),
-            'name': ticker_dict['name'],
-            'price': round(float(ticker_dict['price']), 2),
-            'volume': int(ticker_dict['volume']),
-            'year_high': round(float(ticker_dict['year_high']), 2),
-            'year_low': round(float(ticker_dict['year_low']), 2)
-        }
+    quotes = get_yahoo_quote(tickers)
+    return JsonResponse(quotes)
 
-    return JsonResponse(quotes_to_return)
-
-
-def get_yahoo_quote(tickers):
-    url_query = "https://finance.yahoo.com/webservice/v1/symbols/{}/quote?format=json&view=detail"
-    yahoo_quotes_response = requests.get(url_query.format(tickers)).json()
-    quotes_to_return = {}
-    for quote in yahoo_quotes_response['list']['resources']:
-        ticker_dict = quote['resource']['fields']
-        quotes_to_return[ticker_dict['symbol']] = {
-            'change': round(float(ticker_dict['change']), 2),
-            'change_percent': round(float(ticker_dict['chg_percent']), 2),
-            'day_high': round(float(ticker_dict['day_high']), 2),
-            'day_low': round(float(ticker_dict['day_low']), 2),
-            'name': ticker_dict['name'],
-            'price': round(float(ticker_dict['price']), 2),
-            'volume': int(ticker_dict['volume']),
-            'year_high': round(float(ticker_dict['year_high']), 2),
-            'year_low': round(float(ticker_dict['year_low']), 2)
-        }
-    return quotes_to_return
