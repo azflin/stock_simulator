@@ -6,3 +6,4 @@ pytz==2015.7
 simplejson==3.8.2
 wheel==0.29.0
 yahoo-finance==1.2.1
+requests==2.9.1

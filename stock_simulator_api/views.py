@@ -61,8 +61,8 @@ class TransactionsList(generics.ListCreateAPIView):
         quantity = int(self.request.data['quantity'])
         transaction_type = self.request.data['transaction_type']
 
-        quote = Quote(ticker)
-        transaction_amount = quantity * quote.last_trade_price_only
+        quote = requests.get("/api/quote/" + ticker).json()
+        transaction_amount = quantity * quote[ticker]['price']
         if transaction_type == 'Buy':
             # Check if portfolio has sufficient funds to execute transaction
             if transaction_amount > portfolio.cash:
@@ -171,3 +171,23 @@ def get_quotes(request, tickers):
         }
 
     return JsonResponse(quotes_to_return)
+
+
+def get_yahoo_quote(tickers):
+    url_query = "https://finance.yahoo.com/webservice/v1/symbols/{}/quote?format=json&view=detail"
+    yahoo_quotes_response = requests.get(url_query.format(tickers)).json()
+    quotes_to_return = {}
+    for quote in yahoo_quotes_response['list']['resources']:
+        ticker_dict = quote['resource']['fields']
+        quotes_to_return[ticker_dict['symbol']] = {
+            'change': round(float(ticker_dict['change']), 2),
+            'change_percent': round(float(ticker_dict['chg_percent']), 2),
+            'day_high': round(float(ticker_dict['day_high']), 2),
+            'day_low': round(float(ticker_dict['day_low']), 2),
+            'name': ticker_dict['name'],
+            'price': round(float(ticker_dict['price']), 2),
+            'volume': int(ticker_dict['volume']),
+            'year_high': round(float(ticker_dict['year_high']), 2),
+            'year_low': round(float(ticker_dict['year_low']), 2)
+        }
+    return quotes_to_return
