@@ -82,63 +82,86 @@ class TransactionsList(generics.ListCreateAPIView):
         return Transaction.objects.filter(portfolio=p)[::-1]
 
     def perform_create(self, serializer):
+
+        # Assign request data to local variables
         portfolio = get_object_or_404(Portfolio, id=self.kwargs['portfolio_id'])
         ticker = self.request.data['ticker'].upper()
-        quantity = int(self.request.data['quantity'])
+        requested_quantity = int(self.request.data['quantity'])
+        if requested_quantity <= 0:
+            raise ValidationError("Cannot transact negative units.")
         transaction_type = self.request.data['transaction_type']
 
-        quote = get_yahoo_quote(ticker)
-        transaction_amount = quantity * quote[ticker]['price']
+        # Get price of ticker and total transaction amount
+        price = get_yahoo_quote(ticker)[ticker]['price']
+        transaction_amount = requested_quantity * price
+        # Get the held stock if it already exists in the portfolio. Otherwise held_stock is None
+        held_stock = portfolio.stocks.filter(ticker=ticker).first()
+
         if transaction_type == 'Buy':
             # Check if portfolio has sufficient funds to execute transaction
             if transaction_amount > portfolio.cash:
                 raise ValidationError(
                     'Insufficient cash to buy {} shares of {}'.format(
-                        quantity,
+                        requested_quantity,
                         ticker
                     )
                 )
             portfolio.cash -= transaction_amount
             portfolio.save()
-            # Check if ticker already exists in portfolio's stocks
-            if ticker in [stock.ticker for stock in portfolio.stocks.all()]:
-                stock_to_increase = portfolio.stocks.get(ticker=ticker)
-                stock_to_increase.quantity += quantity
-                stock_to_increase.save()
+            if held_stock:
+                held_stock.quantity += requested_quantity
+                held_stock.save()
             else:  # ticker doesn't exist in portfolio, create new Stock
                 new_stock = Stock(
                     ticker=ticker,
-                    quantity=quantity,
+                    quantity=requested_quantity,
                     portfolio=portfolio
                 )
                 new_stock.save()
+
         elif transaction_type == 'Sell':
-            # Check if portfolio has sufficient units of stock to sell
-            if ticker in [stock.ticker for stock in portfolio.stocks.all()]:
-                stock_to_sell = portfolio.stocks.get(ticker=ticker)
-                if stock_to_sell.quantity >= quantity:
-                    stock_to_sell.quantity -= quantity
-                    stock_to_sell.save()
-                    if stock_to_sell.quantity == 0:
-                        stock_to_sell.delete()
+            # If you hold more units than you want to sell, proceed.
+            if held_stock and held_stock.quantity >= requested_quantity:
+                portfolio.cash += transaction_amount
+                held_stock.quantity -= requested_quantity
+                portfolio.save()
+                held_stock.save()
+            # Else we attempt to short and must check if equity > 150% short exposure
+            else:
+                short_exposure = portfolio.get_short_exposure()
+                # If we don't have stock or have a short position in it, increase our short exposure
+                # by transaction amount.
+                if not held_stock or held_stock.quantity < 0:
+                    short_exposure += transaction_amount
+                # If we have stock but the sell transaction will move us into a short position,
+                # add the remaining units to short exposure
+                elif held_stock.quantity < requested_quantity:
+                    short_exposure += (requested_quantity - held_stock.quantity) * price
+
+                # If our equity is > 150% of short exposure, proceed with transaction
+                if short_exposure * 1.5 < portfolio.get_market_value():
                     portfolio.cash += transaction_amount
                     portfolio.save()
-                else:  # Portfolio doesn't have enough units of ticker to sell
-                    raise ValidationError(
-                        "You want to sell {} units of {} but only have {} units.".format(
-                            quantity,
-                            ticker,
-                            stock_to_sell.quantity
+                    if held_stock:
+                        held_stock.quantity -= requested_quantity
+                        if held_stock.quantity == 0:
+                            held_stock.delete()
+                        else:
+                            held_stock.save()
+                    else:  # Create new short stock position if not held
+                        new_stock = Stock(
+                            ticker=ticker,
+                            quantity=-requested_quantity,
+                            portfolio=portfolio
                         )
+                        new_stock.save()
+                else:
+                    raise ValidationError(
+                        ("Insufficient equity to short. ",
+                         "Your equity must be 150% of your short exposure.")
                     )
-            else:  # Ticker doesn't exist in portfolio's stocks
-                raise ValidationError(
-                    "{} doesn't exist in {}'s stocks.".format(
-                        ticker,
-                        portfolio.name
-                    )
-                )
-        serializer.save(ticker=ticker, portfolio=portfolio, price=quote[ticker]['price'])
+
+        serializer.save(ticker=ticker, portfolio=portfolio, price=price)
 
 
 class StocksList(generics.ListAPIView):

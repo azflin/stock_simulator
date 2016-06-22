@@ -22,11 +22,15 @@
 							.then(getTransactionsSuccessFn);
 					};
 
-					// Load page with portfolio
+					// Initialize scope with portfolio's stocks (and their prices), cash,
+					// and overall return
 					$scope.initialize($routeParams.userID, $routeParams.portfolioID);
 
 					function getOnePortfolioSuccessFn(response) {
+						// Response contains portfolio's name, stocks, and cash
 						$scope.portfolio = response.data;
+						// Get prices of portfolio's stocks and calculate total market value
+						// and total holding period return
 						var tickers = [];
 						angular.forEach(response.data.stocks, function (stock) {
 							tickers.push(stock.ticker);
@@ -42,7 +46,7 @@
 								$scope.portfolio.overallReturn =
 									(($scope.portfolio.marketValue/100000 - 1) * 100).toFixed(2);
 								$scope.portfolio.style = {};
-								// Set color of overall return
+								// Set color of overall return to green if positive and red if negative
 								if ($scope.portfolio.overallReturn >= 0) {
 									$scope.portfolio.style.color = "green";
 								} else {
