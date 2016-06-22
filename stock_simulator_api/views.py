@@ -110,7 +110,10 @@ class TransactionsList(generics.ListCreateAPIView):
             portfolio.save()
             if held_stock:
                 held_stock.quantity += requested_quantity
-                held_stock.save()
+                if held_stock.quantity == 0:
+                    held_stock.delete()
+                else:
+                    held_stock.save()
             else:  # ticker doesn't exist in portfolio, create new Stock
                 new_stock = Stock(
                     ticker=ticker,
@@ -123,9 +126,12 @@ class TransactionsList(generics.ListCreateAPIView):
             # If you hold more units than you want to sell, proceed.
             if held_stock and held_stock.quantity >= requested_quantity:
                 portfolio.cash += transaction_amount
-                held_stock.quantity -= requested_quantity
                 portfolio.save()
-                held_stock.save()
+                held_stock.quantity -= requested_quantity
+                if held_stock.quantity == 0:
+                    held_stock.delete()
+                else:
+                    held_stock.save()
             # Else we attempt to short and must check if equity > 150% short exposure
             else:
                 short_exposure = portfolio.get_short_exposure()
@@ -139,15 +145,13 @@ class TransactionsList(generics.ListCreateAPIView):
                     short_exposure += (requested_quantity - held_stock.quantity) * price
 
                 # If our equity is > 150% of short exposure, proceed with transaction
-                if short_exposure * 1.5 < portfolio.get_market_value():
+                equity = portfolio.get_market_value() + transaction_amount
+                if short_exposure * 1.5 < equity:
                     portfolio.cash += transaction_amount
                     portfolio.save()
                     if held_stock:
                         held_stock.quantity -= requested_quantity
-                        if held_stock.quantity == 0:
-                            held_stock.delete()
-                        else:
-                            held_stock.save()
+                        held_stock.save()
                     else:  # Create new short stock position if not held
                         new_stock = Stock(
                             ticker=ticker,
@@ -157,8 +161,11 @@ class TransactionsList(generics.ListCreateAPIView):
                         new_stock.save()
                 else:
                     raise ValidationError(
-                        ("Insufficient equity to short. ",
-                         "Your equity must be 150% of your short exposure.")
+                        (
+                            "This transaction will bring your equity to {0}, but your total "
+                            "short exposure will be {1}. Your equity must be at least "
+                            "150% of your total short exposure to proceed."
+                        ).format(equity, short_exposure)
                     )
 
         serializer.save(ticker=ticker, portfolio=portfolio, price=price)

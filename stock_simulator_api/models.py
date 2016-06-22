@@ -7,6 +7,16 @@ class Portfolio(models.Model):
     cash = models.FloatField(default=100000)
     owner = models.ForeignKey('auth.User', related_name='portfolios')
 
+    def get_market_value(self):
+        market_value = self.cash
+        long_stocks = [stock for stock in self.stocks.all() if stock.quantity > 0]
+        if long_stocks:
+            long_stocks_tickers = ",".join([stock.ticker for stock in long_stocks])
+            long_stocks_quote = get_yahoo_quote(long_stocks_tickers)
+            for stock in long_stocks:
+                market_value += long_stocks_quote[stock.ticker]['price'] * stock.quantity
+        return market_value
+
     def get_short_exposure(self):
         """
         Return the portfolio's short exposure.
