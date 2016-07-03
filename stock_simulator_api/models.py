@@ -8,6 +8,12 @@ class Portfolio(models.Model):
     owner = models.ForeignKey('auth.User', related_name='portfolios')
 
     def get_market_value(self):
+        """
+        Return portfolio's market value. This is sum of cash and market value of long positions.
+
+        Returns:
+            float: portfolio's market value
+        """
         market_value = self.cash
         long_stocks = [stock for stock in self.stocks.all() if stock.quantity > 0]
         if long_stocks:

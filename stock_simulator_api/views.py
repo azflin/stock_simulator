@@ -163,7 +163,7 @@ class TransactionsList(generics.ListCreateAPIView):
                     raise ValidationError(
                         (
                             "This transaction will bring your equity to {0}, but your total "
-                            "short exposure will be {1}. Your equity must be at least "
+                            "short exposure will be {1}. Your equity must be greater than "
                             "150% of your total short exposure to proceed."
                         ).format(equity, short_exposure)
                     )

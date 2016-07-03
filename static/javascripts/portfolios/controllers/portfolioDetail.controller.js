@@ -24,40 +24,61 @@
 
 					// Initialize scope with portfolio's stocks (and their prices), cash,
 					// and overall return
-					$scope.initialize($routeParams.userID, $routeParams.portfolioID);
+					$scope.initialize();
 
 					function getOnePortfolioSuccessFn(response) {
 						// Response contains portfolio's name, stocks, and cash
 						$scope.portfolio = response.data;
+						$scope.portfolio.marketValue = $scope.portfolio.cash;
+
 						// Get prices of portfolio's stocks and calculate total market value
 						// and total holding period return
 						var tickers = [];
-						angular.forEach(response.data.stocks, function (stock) {
+						angular.forEach($scope.portfolio.stocks, function (stock) {
 							tickers.push(stock.ticker);
 						});
 						tickers = tickers.join();
-						$http.get('/api/quote/' + tickers).then(
-							function (response) {
-								$scope.portfolio.marketValue = $scope.portfolio.cash;
-								angular.forEach($scope.portfolio.stocks, function (stock) {
-									stock.price = response.data[stock.ticker].price;
-									$scope.portfolio.marketValue += stock.price * stock.quantity;
-								});
-								$scope.portfolio.overallReturn =
-									(($scope.portfolio.marketValue/100000 - 1) * 100).toFixed(2);
-								$scope.portfolio.style = {};
-								// Set color of overall return to green if positive and red if negative
-								if ($scope.portfolio.overallReturn >= 0) {
-									$scope.portfolio.style.color = "green";
-								} else {
-									$scope.portfolio.style.color = "red";
+
+						if (tickers) {
+							// Get price quotes of portfolio's stocks to populate each stock's price on the
+							// interface and to calculate portfolio's market value
+							$http.get('/api/quote/' + tickers).then(
+								function (response) {
+									// Add market value of each stock to portfolio's market value
+									angular.forEach($scope.portfolio.stocks, function (stock) {
+										stock.price = response.data[stock.ticker].price;
+										$scope.portfolio.marketValue += stock.price * stock.quantity;
+									});
+									// Calculate overall return and assign return in the interface a color
+									$scope.portfolio.overallReturn =
+										(($scope.portfolio.marketValue/100000 - 1) * 100).toFixed(2);
+									$scope.portfolio.style = {};
+									// Set color of overall return to green if positive and red if negative
+									if ($scope.portfolio.overallReturn >= 0) {
+										$scope.portfolio.style.color = "green";
+									} else {
+										$scope.portfolio.style.color = "red";
+									}
 								}
+							);
+						} else {
+							//This code duplication is required because HTTP callbacks create a timing issue
+							$scope.portfolio.overallReturn =
+								(($scope.portfolio.marketValue/100000 - 1) * 100).toFixed(2);
+							$scope.portfolio.style = {};
+							// Set color of overall return to green if positive and red if negative
+							if ($scope.portfolio.overallReturn >= 0) {
+								$scope.portfolio.style.color = "green";
+							} else {
+								$scope.portfolio.style.color = "red";
 							}
-						);
+						}
 					}
+
 					function getOnePortfolioErrorFn(response) {
 						$scope.errorMessage = response.data;
 					}
+
 					function getTransactionsSuccessFn(response) {
 						$scope.transactions = response.data;
 					}
