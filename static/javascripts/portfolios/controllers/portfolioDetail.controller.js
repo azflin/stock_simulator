@@ -47,6 +47,7 @@
 									// Add market value of each stock to portfolio's market value
 									angular.forEach($scope.portfolio.stocks, function (stock) {
 										stock.price = response.data[stock.ticker].price;
+										stock.change_percent = response.data[stock.ticker].change_percent;
 										$scope.portfolio.marketValue += stock.price * stock.quantity;
 									});
 									// Calculate overall return and assign return in the interface a color

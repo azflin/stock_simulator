@@ -22,7 +22,8 @@ when someone navigates to invalid portfolioID. -->
   <div class="row">
     <div class="col-xs-4">
       <h4>Overall Return:</h4>
-      <h4 ng-style="portfolio.style">{{ portfolio.overallReturn }}%</h4>
+      <h4 ng-style="{color: (portfolio.overallReturn >= 0 ? 'green' : 'red')}">
+        {{ portfolio.overallReturn }}%</h4>
     </div>
     <div class="col-xs-4">
       <h4>Cash:</h4>
@@ -45,12 +46,15 @@ when someone navigates to invalid portfolioID. -->
             <th>Ticker</th>
             <th>Quantity</th>
             <th>Price</th>
+            <th>% Change</th>
           </thead>
           <tbody>
             <tr ng-repeat="stock in portfolio.stocks">
               <td>{{ stock.ticker }}</td>
               <td>{{ stock.quantity }}</td>
               <td>{{ stock.price }}</td>
+              <td ng-style="{color: (stock.change_percent >= 0 ? 'green' : 'red' )}">
+                {{ stock.change_percent }}%</td>
             </tr>
           </tbody>
         </table>
