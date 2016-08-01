@@ -3,14 +3,29 @@
     <div class="well well-sm">
       <div class="row">
         <div class="col-sm-12">
-          <h3 style="display: inline;"><a ng-href="/#/users/{{ userID }}/{{ portfolio.id }}">{{ portfolio.name }}</a></h3>
-          <button type="button" class="btn btn-danger pull-right" ng-show="isPageOwner" ng-click="deletePortfolio($index)">Delete</button>
+          <h3 style="display: inline;">
+            <a ng-href="/#/users/{{ userID }}/{{ portfolio.id }}">{{ portfolio.name }}</a>
+          </h3>
+          <button type="button"
+                  class="btn btn-danger pull-right"
+                  ng-show="isPageOwner"
+                  ng-click="deletePortfolio($index)">Delete</button>
         </div>
-        <div class="col-sm-12">
-          Cash: {{ portfolio.cash }}
+      </div>
+      <!-- Overall Return, Portfolio Value, and Creation Date row-->
+      <div class="row">
+        <div class="col-xs-4">
+          <h5 style="display: inline">Overall Return:</h5>
+          <h5 ng-style="{color: (portfolio.overallReturn >= 0 ? 'green' : 'red'), display: 'inline'}">
+            {{ portfolio.overallReturn }}%</h5>
         </div>
-        <div class="col-sm-12">
-          Stocks: {{ portfolio.stocks }}
+        <div class="col-xs-4">
+          <h5 style="display: inline;">Cash:</h5>
+          <h5 style="display: inline">${{ portfolio.cash | number }}</h5>
+        </div>
+        <div class="col-xs-4">
+          <h5 style="display: inline;">Market Value:</h5>
+          <h5 style="display: inline">${{ portfolio.marketValue | number }}</h5>
         </div>
       </div>
     </div>

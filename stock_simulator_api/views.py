@@ -93,7 +93,7 @@ class TransactionsList(generics.ListCreateAPIView):
 
         # Get price of ticker and total transaction amount
         price = get_yahoo_quote(ticker)[ticker]['price']
-        transaction_amount = requested_quantity * price
+        transaction_amount = round(requested_quantity * price, 2)
         # Get the held stock if it already exists in the portfolio. Otherwise held_stock is None
         held_stock = portfolio.stocks.filter(ticker=ticker).first()
 
