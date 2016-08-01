@@ -1,6 +1,6 @@
 <!-- Only show detail if no error message. Error message appears
 when someone navigates to invalid portfolioID. -->
-<div ng-show="!errorMessage">
+<div ng-show="!portfolioNotFound">
   <!-- Main page header-->
   <div class="row">
     <div class="col-xs-12">
@@ -18,6 +18,15 @@ when someone navigates to invalid portfolioID. -->
   <new-transaction-modal portfolio-id="{{ portfolio.id }}"
                          initialize="initialize()">
   </new-transaction-modal>
+  </br>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="alert alert-danger" ng-show="getQuoteError">
+        Could not get stock quote data. This must mean there is an issue with the Yahoo Finance
+        webservice.
+      </div>
+    </div>
+  </div>
   <!-- Overall Return, Portfolio Value, and Creation Date row-->
   <div class="row">
     <div class="col-xs-4">
@@ -89,8 +98,8 @@ when someone navigates to invalid portfolioID. -->
   </div>
 </div>
 <div class="row">
-  <!-- Error message goes here.-->
-  <div class="col-md-12" ng-show="errorMessage">
+  <!-- Portfolio not found error message goes here.-->
+  <div class="col-md-12" ng-show="portfolioNotFound">
     <h3><span class="glyphicon glyphicon-remove-circle"></span>
       Error: This portfolio could not be found.
     </h3>

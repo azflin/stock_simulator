@@ -36,7 +36,7 @@
 				}
 
 				function initializeErrorFn (response) {
-					$scope.errorMessage = true;
+					$scope.portfolioNotFound = true;
 				}
 
 				function createPortfolioSuccessFn (response) {

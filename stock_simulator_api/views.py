@@ -22,7 +22,11 @@ def get_yahoo_quote(tickers):
     :return dict where key is string ticker and value is dict of ticker's quote info
     """
     url_query = "https://finance.yahoo.com/webservice/v1/symbols/{}/quote?format=json&view=detail"
-    yahoo_quotes_response = requests.get(url_query.format(tickers)).json()
+    # Yahoo Finance's webservice has been shutdown, EXCEPT for when you add this mobile header.
+    # This is currently a workaround, and eventually I will need to replace this entire process.
+    headers = {"User-Agent": "Mozilla/5.0 (Linux; Android 6.0.1; MotoG3 Build/MPI24.107-55)" +
+               "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.81 Mobile Safari/537.36"}
+    yahoo_quotes_response = requests.get(url_query.format(tickers), headers=headers).json()
     quotes_to_return = {}
     for quote in yahoo_quotes_response['list']['resources']:
         ticker_dict = quote['resource']['fields']

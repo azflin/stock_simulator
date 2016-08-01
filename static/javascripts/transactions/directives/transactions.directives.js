@@ -47,24 +47,34 @@
 							$scope.quote = null;
 						} else {
 							$http.get('/api/quote/' + ticker).then(
-								function (response) {
-									// If an empty object is returned, it means invalid yahoo finance ticker.
-									if (Object.keys(response.data).length == 0) {
-										$scope.quote = { errorMessage: "Invalid ticker." };
-									} else {
-										$scope.quote = response.data[ticker.toUpperCase()];
-										//$scope.quoteStyle will be passed into ng-style for certain tags
-										$scope.quoteStyle = {};
-										// Make positive price changes green and negative changes red
-										if ($scope.quote.change >= 0) {
-											$scope.quoteStyle.color = "green";
-										} else if ($scope.quote.change < 0) {
-											$scope.quoteStyle.color = "red";
-										}
-									}
-								}
+								function success(response) {
+									return getQuoteSuccessFn(response, ticker)
+								}, getQuoteErrorFn
 							);
 						}
+					};
+
+					function getQuoteSuccessFn (response, ticker) {
+						// If an empty object is returned, it means invalid yahoo finance ticker.
+						if (Object.keys(response.data).length == 0) {
+							$scope.quote = { portfolioNotFound: "Invalid ticker." };
+						} else {
+							$scope.quote = response.data[ticker.toUpperCase()];
+							//$scope.quoteStyle will be passed into ng-style for certain tags
+							$scope.quoteStyle = {};
+							// Make positive price changes green and negative changes red
+							if ($scope.quote.change >= 0) {
+								$scope.quoteStyle.color = "green";
+							} else if ($scope.quote.change < 0) {
+								$scope.quoteStyle.color = "red";
+							}
+						}
+					}
+
+					function getQuoteErrorFn (response) {
+						$scope.status = 'failure';
+						$scope.alertMessage = "Could not get stock quote data." +
+							"This must mean there is an issue with the Yahoo Finance webservice."
 					}
 				},
 				templateUrl: '/static/templates/transactions/new_transaction_modal.html'
