@@ -75,13 +75,6 @@
 						// Calculate overall return and assign return in the interface a color
 						$scope.portfolio.overallReturn =
 							(($scope.portfolio.marketValue/100000 - 1) * 100).toFixed(2);
-						$scope.portfolio.style = {};
-						// Set color of overall return to green if positive and red if negative
-						if ($scope.portfolio.overallReturn >= 0) {
-							$scope.portfolio.style.color = "green";
-						} else {
-							$scope.portfolio.style.color = "red";
-						}
 					}
 
 					function getQuoteErrorFn (response) {

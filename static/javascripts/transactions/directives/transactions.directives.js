@@ -57,7 +57,7 @@
 					function getQuoteSuccessFn (response, ticker) {
 						// If an empty object is returned, it means invalid yahoo finance ticker.
 						if (Object.keys(response.data).length == 0) {
-							$scope.quote = { portfolioNotFound: "Invalid ticker." };
+							$scope.quote = { invalidTickerMessage: "Invalid ticker." };
 						} else {
 							$scope.quote = response.data[ticker.toUpperCase()];
 							//$scope.quoteStyle will be passed into ng-style for certain tags

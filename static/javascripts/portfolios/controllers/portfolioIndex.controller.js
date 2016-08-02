@@ -17,8 +17,15 @@
 					Portfolios.createPortfolio($scope.portfolioName)
 						.then(createPortfolioSuccessFn, createPortfolioErrorFn);
 				};
-				$scope.deletePortfolio = function (idx) {
-					Portfolios.deletePortfolio($scope.portfolios[idx].id).then(function () {
+				$scope.deletePortfolio = function (id) {
+					var idx = 0;
+					Portfolios.deletePortfolio(id).then(function () {
+						// Find portfolio to delete in $scope.portfolios and then splice it out
+						angular.forEach($scope.portfolios, function(object, index) {
+							if (object.id == id) {
+								idx = index;
+							}
+						});
 						$scope.portfolios.splice(idx, 1);
 					});
 				};
@@ -32,7 +39,6 @@
 
 				function initializeSuccessFn (response) {
 					$scope.portfolios = response.data;
-					console.log(response.data);
 				}
 
 				function initializeErrorFn (response) {
