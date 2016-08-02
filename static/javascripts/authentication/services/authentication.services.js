@@ -1,3 +1,7 @@
+/**
+ * Authentication
+ * @namespace stock_simulator.authentication.services
+ */
 (function () {
 	'use strict';
 
