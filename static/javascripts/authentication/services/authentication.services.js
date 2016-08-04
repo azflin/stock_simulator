@@ -40,7 +40,7 @@
 
 				function logoutSuccessFn(response){
 					unauthenticate();
-					window.location ='/#/home';
+					window.location ='/#/';
 					window.location.reload();
 				}
 			}
