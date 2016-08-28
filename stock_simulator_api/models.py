@@ -2,6 +2,10 @@ from django.db import models
 
 
 class Portfolio(models.Model):
+    """
+    A portfolio belonging to a User. A portfolio has a cash balance (defaulting to $100,000),
+    stocks and transactions.
+    """
     created = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=100)
     cash = models.FloatField(default=100000)
@@ -43,12 +47,18 @@ class Portfolio(models.Model):
 
 
 class Stock(models.Model):
+    """
+    A stock belonging to a Portfolio.
+    """
     ticker = models.CharField(max_length=10)
     quantity = models.IntegerField()
     portfolio = models.ForeignKey(Portfolio, on_delete=models.CASCADE, related_name='stocks')
 
 
 class Transaction(models.Model):
+    """
+    A transaction belonging to a Portfolio.
+    """
     ticker = models.CharField(max_length=50)
     transaction_type = models.CharField(max_length=50)
     price = models.FloatField(blank=True)

@@ -1,3 +1,6 @@
+"""
+Views for authentication to create a user, login, and logout.
+"""
 import json
 
 from rest_framework import permissions, views, status

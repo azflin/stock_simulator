@@ -2,6 +2,7 @@
 scripts.py is intended to be run as a script from the command line. Currently it contains
 code to force margin calls for all portfolios that carry too much short exposure.
 """
+# TODO: Complete this! Need daily checking of portfolio margin call violations.
 
 from models import Portfolio
 

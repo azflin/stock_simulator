@@ -1,7 +1,7 @@
 import requests
 
 from rest_framework import viewsets, permissions, generics
-from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
@@ -9,6 +9,7 @@ from django.http import JsonResponse
 
 from stock_simulator_api.models import Portfolio, Transaction, Stock
 from stock_simulator_api.permissions import IsOwnerOrReadOnly, IsPortfolioOwnerOrReadOnly
+from authentication.serializers import UserSerializer
 from serializers import TransactionSerializer, StockSerializer
 from serializers import PortfolioSerializer
 
@@ -18,8 +19,10 @@ def get_yahoo_quote(tickers):
     get_yahoo_quote returns stock quote information from yahoo finance's webservice on the
     supplied tickers.
 
-    :param tickers: string of comma separated tickers
-    :return dict where key is string ticker and value is dict of ticker's quote info
+    Args:
+        tickers (str): Tickers delimited by commas
+    Returns:
+        Dict(str: Dict): The key is the ticker and the value is dict of ticker's quote info
     """
     url_query = "https://finance.yahoo.com/webservice/v1/symbols/{}/quote?format=json&view=detail"
     # Yahoo Finance's webservice has been shutdown, EXCEPT for when you add this mobile header.
@@ -42,6 +45,16 @@ def get_yahoo_quote(tickers):
             'year_low': round(float(ticker_dict['year_low']), 2)
         }
     return quotes_to_return
+
+
+class GetQuotes(APIView):
+    """
+    Get quote information on a list of tickers. Returns JSON response of a dict with keys being
+    tickers and values being a dict of quote information.
+    """
+    def get(self, request, tickers):
+        quotes = get_yahoo_quote(tickers)
+        return JsonResponse(quotes)
 
 
 class PortfolioViewSet(viewsets.ModelViewSet):
@@ -186,19 +199,30 @@ class StocksList(generics.ListAPIView):
         return Stock.objects.filter(portfolio=p)
 
 
-@api_view(['GET'])
-def get_quotes(request, tickers):
+class TopPortfoliosList(generics.ListAPIView):
     """
-    get_quotes returns stock price data for a given list of tickers in JSON format.
-    It makes a call to yahoo finance's quotes webservice and reformats the response into
-    a more usable format.
-
-    :param request: Django request
-    :param tickers: string in URL of comma separated tickers
-    :return: JSON representation of a dict with keys being tickers and values being a dict
-    of pricing data
+    List of top performing portfolios. Supports GET list.
     """
+    serializer_class = PortfolioSerializer
 
-    quotes = get_yahoo_quote(tickers)
-    return JsonResponse(quotes)
+    # TODO: Currently its just a brute force method
+    def get_queryset(self):
+        portfolios = Portfolio.objects.all()
+        portfolios_with_mkt_values = []
+        for portfolio in portfolios:
+            portfolios_with_mkt_values.append({
+                "portfolio": portfolio,
+                "market_value": portfolio.get_market_value()
+            })
+        sorted_portfolios = sorted(portfolios_with_mkt_values, key=lambda x: x['market_value'])
 
+
+class UsersList(generics.ListAPIView):
+    """
+    All the users in stock_simulator's database. Supports GET list.
+    """
+    serializer_class = UserSerializer
+
+    def get_queryset(self):
+        users = User.objects.all()
+        return users
