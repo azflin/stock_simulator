@@ -8,6 +8,9 @@
 			$routeProvider.when('/users/:userID', {
 				controller: 'PortfolioIndexController',
 				templateUrl: '/static/templates/portfolios/index.html',
+			}).when('/users/', {
+				controller: 'UsersListController',
+				templateUrl: '/static/templates/authentication/users-list.html'
 			}).when('/users/:userID/:portfolioID', {
 				controller: 'PortfolioDetailController',
 				templateUrl: '/static/templates/portfolios/detail.html',
