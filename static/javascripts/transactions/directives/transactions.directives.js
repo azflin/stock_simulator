@@ -77,7 +77,7 @@
 							"This must mean there is an issue with the Yahoo Finance webservice."
 					}
 				},
-				templateUrl: '/static/templates/transactions/new_transaction_modal.html'
+				templateUrl: '/static/templates/transactions/new-transaction-modal.html'
 			};
 			return directive;
 		});
