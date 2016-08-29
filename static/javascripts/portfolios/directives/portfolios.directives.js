@@ -48,7 +48,7 @@
 						//TODO: Show error message on index view when /api/quote fails
 					}
 				},
-				templateUrl: '/static/templates/portfolios/portfolio_snapshot.html'
+				templateUrl: '/static/templates/portfolios/portfolio-snapshot.html'
 			};
 			return directive;
 		});
