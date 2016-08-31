@@ -10,7 +10,6 @@
 					angular.forEach(response.data, function (value) {
 						this.push({"id": value.id, "username": value.username})
 					}, $scope.users);
-					console.log($scope.users);
 				});
 			}]);
 })();

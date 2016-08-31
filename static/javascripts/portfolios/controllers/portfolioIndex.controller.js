@@ -39,6 +39,18 @@
 
 				function initializeSuccessFn (response) {
 					$scope.portfolios = response.data;
+					// Display an alert if user has no portfolios.
+					if ($scope.portfolios.length==0) {
+						if ($scope.isPageOwner) {
+							var noPortfoliosAlert = '<div class="alert alert-warning"> \
+							<a class="close" data-dismiss="alert">&times;</a> \
+							You have no portfolios. Hit "Create Portfolio" to make one.</div>';
+						} else {
+							var noPortfoliosAlert = '<div class="alert alert-warning"> \
+							This user has no portfolios.</div>';
+						}
+						$('#portfolio-index-alerts').append(noPortfoliosAlert);
+					}
 				}
 
 				function initializeErrorFn (response) {
