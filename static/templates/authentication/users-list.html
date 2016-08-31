@@ -1,3 +1,12 @@
 <div class="row">
-  <h1>USERS LIST</h1>
+  <div class="col-xs-12">
+    <h1>Users List</h1>
+    <p>This is a list of all users registered in Stock Simulator, ordered by creation date.
+    Click on a username to view their profile.</p>
+  </div>
+  <div class="col-xs-12">
+    <div ng-repeat="user in users">
+      <h4>{{ user.id }}: <a ng-href="/#/users/{{ user.username }}">{{ user.username }}</a></h4>
+    </div>
+  </div>
 </div>

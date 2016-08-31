@@ -6,7 +6,11 @@
 		.controller('UsersListController', ['$scope', '$http',
 			function($scope, $http) {
 				$http.get('/api/users/').then(function (response) {
-					console.log(response.data);
+					$scope.users = [];
+					angular.forEach(response.data, function (value) {
+						this.push({"id": value.id, "username": value.username})
+					}, $scope.users);
+					console.log($scope.users);
 				});
 			}]);
 })();

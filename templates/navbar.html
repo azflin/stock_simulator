@@ -4,11 +4,14 @@
       <a class="navbar-brand" href="/#/">Stock Simulator</a>
     </div>
     <ul class="nav navbar-nav">
+      <!-- If user is authenticated, show "Your Portfolios" in navbar-->
       {% if user.is_authenticated %}
-        <li><a href="/#/users/{{ user.username }}">Home</a></li>
+        <li><a href="/#/users/{{ user.username }}">Your Portfolios</a></li>
       {% endif %}
+      <li><a href="/#/users/">Users List</a></li>
     </ul>
     <ul class="nav navbar-nav pull-right">
+      <!-- If user is authenticated, show "Logout" in navbar-->
       {% if user.is_authenticated %}
         <li><a href="javascript:void(0)">{{ user.username }}</a></li>
         <li ng-controller="LogoutController">
@@ -19,6 +22,5 @@
         <li><a href="#/login">Login</a></li>
       {% endif %}
     </ul>
-
   </div>
 </nav>
