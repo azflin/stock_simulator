@@ -4,6 +4,10 @@ from django.utils.decorators import method_decorator
 
 
 class IndexView(TemplateView):
+    """
+    Only Django view in the entire project. This view includes the javascripts and the container
+    containing the ng-view div.
+    """
     template_name = 'index.html'
 
     @method_decorator(ensure_csrf_cookie)
