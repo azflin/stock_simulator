@@ -66,5 +66,16 @@ class Transaction(models.Model):
     quantity = models.IntegerField()
     portfolio = models.ForeignKey(Portfolio, on_delete=models.CASCADE)
 
+
+class Position(models.Model):
+    """
+    A position is a record of a Portfolio's holdings and the market value of its
+    holdings at a given point in time.
+    """
+    created = models.DateTimeField(auto_now_add=True)
+    cash = models.FloatField
+    portfolio = models.ForeignKey(Portfolio, on_delete=models.CASCADE, related_name='positions')
+
+
 # Must import after model definitions because of circular import error
 from views import get_yahoo_quote
