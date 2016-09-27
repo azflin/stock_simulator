@@ -69,11 +69,12 @@ class Transaction(models.Model):
 
 class Position(models.Model):
     """
-    A position is a record of a Portfolio's holdings and the market value of its
-    holdings at a given point in time.
+    A position is a record of a Portfolio's stock holding on a given date.
     """
-    created = models.DateTimeField(auto_now_add=True)
-    cash = models.FloatField
+    datetime = models.DateTimeField(auto_now_add=True)
+    ticker = models.CharField(max_length=50)
+    units = models.IntegerField()
+    price = models.FloatField()
     portfolio = models.ForeignKey(Portfolio, on_delete=models.CASCADE, related_name='positions')
 
 

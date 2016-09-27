@@ -13,3 +13,4 @@ static/bower_components/
 # Misc
 .DS_Store
 .idea/
+migrations/

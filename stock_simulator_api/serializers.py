@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from models import Portfolio, Transaction, Stock
+from models import Portfolio, Transaction, Stock, Position
 
 
 class StockSerializer(serializers.ModelSerializer):
@@ -26,3 +26,7 @@ class TransactionSerializer(serializers.ModelSerializer):
         model = Transaction
         fields = ('ticker', 'transaction_type', 'price', 'time', 'quantity', 'portfolio')
         read_only_fields = ('portfolio', 'time', 'price')
+
+
+class PositionSerializer(serializers.ModelSerializer):
+    pass
