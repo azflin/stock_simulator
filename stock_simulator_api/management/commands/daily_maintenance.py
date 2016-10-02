@@ -24,6 +24,7 @@ def save_positions(portfolio):
     Create Positions for the portfolio. This function will be called at the end of each market
     day to capture that day's end of day prices.
     """
+    # Save portfolio's stock positions
     for stock in portfolio.stocks.all():
         position = Position(
             ticker=stock.ticker,
@@ -32,10 +33,18 @@ def save_positions(portfolio):
             portfolio=stock.portfolio
         )
         position.save()
+    # Save portfolio's cash position
+    cash_position = Position(
+        ticker='CASH',
+        units=portfolio.cash,
+        price=1,
+        portfolio=portfolio
+    )
+    cash_position.save()
 
 
 class Command(BaseCommand):
-    help = 'Daily maintenance tasks for the stock simualtor.'
+    help = 'Daily maintenance tasks for the stock simulator.'
 
     def add_arguments(self, parser):
         parser.add_argument('--save_positions', action='store_true')
