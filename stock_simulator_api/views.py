@@ -1,6 +1,7 @@
 import requests
 
 from rest_framework import viewsets, permissions, generics
+from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
@@ -73,16 +74,16 @@ class PortfolioViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
-    # Get portfolios belonging to the username given in username get parameter
-    def get_queryset(self):
-        username = self.request.query_params.get('username', None)
-        if not username:
-            raise ValidationError({"detail": "No username get parameter provided."})
-        user = User.objects.filter(username=username)
-        if user:
-            return Portfolio.objects.filter(owner=user)
-        else:  # No such user exists
-            raise ValidationError({"detail": "No such user exists."})
+    # list can be filtered by username, otherwise return all portfolios
+    def list(self, request):
+        username = request.query_params.get('username', None)
+        if username:
+            user = User.objects.filter(username=username)
+            queryset = Portfolio.objects.filter(owner=user)
+        else:
+            queryset = Portfolio.objects.all()
+        serializer = PortfolioSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class TransactionsList(generics.ListCreateAPIView):
