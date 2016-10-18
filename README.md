@@ -29,6 +29,8 @@ __/api/portfolios/__
 
 __/api/portfolios/\<portfolio_id\>/__  
 * GET: Get one portfolio.  
+* PUT: Edit a portfolio (can only edit name). Must be authenticated as owner of portfolio.  
+* DELETE: Delete a portfolio. Must be authenticated as owner of portfolio.  
 
 __/api/portfolios/\<portfolio_id\>/transactions/__  
 * GET: Get list of portfolio's transactions.  
