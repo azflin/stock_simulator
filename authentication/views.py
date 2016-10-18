@@ -13,7 +13,10 @@ from .serializers import UserSerializer
 
 
 class CreateUserView(CreateAPIView):
-
+    """
+    api/register/
+        POST: Create a user. Payload must contain "username", "password", and optionally "email".
+    """
     model = User
     permission_classes = [
         permissions.AllowAny
@@ -22,8 +25,11 @@ class CreateUserView(CreateAPIView):
 
 
 class LoginView(views.APIView):
-    def post(self, request, format=None):
-
+    """
+    api/login/
+        POST: Login a user. Payload must contain "username" and "password".
+    """
+    def post(self, request):
         data = json.loads(request.body)
         username = data.get('username', None)
         password = data.get('password', None)
@@ -47,9 +53,12 @@ class LoginView(views.APIView):
 
 
 class LogoutView(views.APIView):
+    """
+    api/logout/
+        POST: Logout currently authenticated user.
+    """
     permission_classes = (permissions.IsAuthenticated,)
 
-    def post(self, request, format=None):
+    def post(self, request):
         logout(request)
-
         return Response({}, status=status.HTTP_204_NO_CONTENT)

@@ -50,8 +50,9 @@ def get_yahoo_quote(tickers):
 
 class GetQuotes(APIView):
     """
-    Get quote information on a list of tickers. Returns JSON response of a dict with keys being
-    tickers and values being a dict of quote information.
+    /api/quote/<tickers>/
+        GET: Get quote information on a list of tickers. Returns JSON response of a dict with keys
+        being tickers and values being a dict of quote information.
     """
     def get(self, request, tickers):
         quotes = get_yahoo_quote(tickers)
@@ -60,8 +61,13 @@ class GetQuotes(APIView):
 
 class PortfolioViewSet(viewsets.ModelViewSet):
     """
-    The portfolios belonging to an account provided by username get parameter.
-    Supports POST, GET list, GET individual.
+    /api/portfolios/
+        GET: Get all portfolios. If a username query parameter is passed, then get that user's
+        portfolios.
+        POST: Create a portfolio. Must be authenticated. JSON payload must contain "name".
+
+    /api/portfolios/<portfolio_id>/
+        GET: Get one portfolio.
     """
     queryset = Portfolio.objects.all()
     serializer_class = PortfolioSerializer
@@ -88,7 +94,12 @@ class PortfolioViewSet(viewsets.ModelViewSet):
 
 class TransactionsList(generics.ListCreateAPIView):
     """
-    The transactions attached to its portfolio. Supports POST, and GET list.
+    /api/portfolios/<portfolio_id>/transactions/
+        GET: Get list of portfolio's transactions.
+        POST: Create a transaction. Must be authenticated. JSON payload must contain:
+            "ticker": Ticker of security you want to transact.
+            "quantity": Number of units you want to transact.
+            "transaction_type": Either "Buy" or "Sell"
     """
     serializer_class = TransactionSerializer
     permission_classes = (IsPortfolioOwnerOrReadOnly, )
@@ -191,7 +202,8 @@ class TransactionsList(generics.ListCreateAPIView):
 
 class StocksList(generics.ListAPIView):
     """
-    The stock holdings attached to a portfolio. Supports GET list.
+    /api/portfolios/<portfolio_id>/stocks/
+        GET: Get portfolio's stock holdings.
     """
     serializer_class = StockSerializer
 
@@ -200,27 +212,10 @@ class StocksList(generics.ListAPIView):
         return Stock.objects.filter(portfolio=p)
 
 
-class TopPortfoliosList(generics.ListAPIView):
-    """
-    List of top performing portfolios. Supports GET list.
-    """
-    serializer_class = PortfolioSerializer
-
-    # TODO: Currently its just a brute force method
-    def get_queryset(self):
-        portfolios = Portfolio.objects.all()
-        portfolios_with_mkt_values = []
-        for portfolio in portfolios:
-            portfolios_with_mkt_values.append({
-                "portfolio": portfolio,
-                "market_value": portfolio.get_market_value()
-            })
-        sorted_portfolios = sorted(portfolios_with_mkt_values, key=lambda x: x['market_value'])
-
-
 class UsersList(generics.ListAPIView):
     """
-    All the users in stock_simulator's database. Supports GET list.
+    /api/users/
+        GET: Get all users.
     """
     serializer_class = UserSerializer
 
