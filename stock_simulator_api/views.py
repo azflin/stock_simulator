@@ -65,6 +65,8 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         GET: Get all portfolios. If a username query parameter is passed, then get that user's
         portfolios.
         POST: Create a portfolio. Must be authenticated. JSON payload must contain "name".
+        PUT: Edit a portfolio (can only edit name). Must be authenticated as owner of portfolio.
+        DELETE: Delete a portfolio. Must be authenticated as owner of portfolio.
 
     /api/portfolios/<portfolio_id>/
         GET: Get one portfolio.
