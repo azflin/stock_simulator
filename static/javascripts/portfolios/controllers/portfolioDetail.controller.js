@@ -15,7 +15,7 @@
 
 					$scope.initialize = function () {
 						// get the portfolio
-						Portfolios.getOnePortfolio($scope.userID, $routeParams.portfolioID)
+						Portfolios.getOnePortfolio($routeParams.portfolioID)
 							.then(getOnePortfolioSuccessFn, getOnePortfolioErrorFn);
 						// get the portfolio's transactions
 						Transactions.getTransactions($routeParams.portfolioID)

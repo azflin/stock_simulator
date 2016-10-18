@@ -17,8 +17,8 @@
 				return $http.get('/api/portfolios/?username=' + username);
 			}
 
-			function getOnePortfolio(username, portfolioID) {
-				return $http.get('/api/portfolios/' + portfolioID + '/?username=' + username);
+			function getOnePortfolio(portfolioID) {
+				return $http.get('/api/portfolios/' + portfolioID);
 			}
 
 			function createPortfolio(name) {
@@ -28,8 +28,7 @@
 			}
 
 			function deletePortfolio(portfolio_id) {
-				return $http.delete('/api/portfolios/' + portfolio_id +
-					'/?username=' + Authentication.getAuthenticatedAccount().username);
+				return $http.delete('/api/portfolios/' + portfolio_id);
 			}
 		}]);
 })();
