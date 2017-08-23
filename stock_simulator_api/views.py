@@ -1,4 +1,5 @@
 import requests
+import urllib
 
 from rest_framework import viewsets, permissions, generics
 from rest_framework.response import Response
@@ -25,25 +26,35 @@ def get_yahoo_quote(tickers):
     Returns:
         Dict(str: Dict): The key is the ticker and the value is dict of ticker's quote info
     """
-    url_query = "https://finance.yahoo.com/webservice/v1/symbols/{}/quote?format=json&view=detail"
-    # Yahoo Finance's webservice has been shutdown, EXCEPT for when you add this mobile header.
-    # This is currently a workaround, and eventually I will need to replace this entire process.
-    headers = {"User-Agent": "Mozilla/5.0 (Linux; Android 6.0.1; MotoG3 Build/MPI24.107-55)" +
-               "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.81 Mobile Safari/537.36"}
-    yahoo_quotes_response = requests.get(url_query.format(tickers), headers=headers).json()
+    encoded_tickers = urllib.quote("'" + tickers + "'")
+    url_query = (
+        "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quote%20"
+        "where%20symbol%20in%20({})&format=json&diagnostics=true&"
+        "env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback="
+    )
+    content = requests.get(url_query.format(encoded_tickers)).json()
+    content = content['query']['results']['quote']
+    # If single quote requested, the returned json will be a dict. If multiple quotes requested,
+    # returned json will be a list. So convert the dict to a list in the single quote case.
+    if type(content) == dict:
+        content = [content]
     quotes_to_return = {}
-    for quote in yahoo_quotes_response['list']['resources']:
-        ticker_dict = quote['resource']['fields']
-        quotes_to_return[ticker_dict['symbol']] = {
-            'change': round(float(ticker_dict['change']), 2),
-            'change_percent': round(float(ticker_dict['chg_percent']), 2),
-            'day_high': round(float(ticker_dict['day_high']), 2),
-            'day_low': round(float(ticker_dict['day_low']), 2),
-            'name': ticker_dict['name'],
-            'price': round(float(ticker_dict['price']), 2),
-            'volume': int(ticker_dict['volume']),
-            'year_high': round(float(ticker_dict['year_high']), 2),
-            'year_low': round(float(ticker_dict['year_low']), 2)
+    for quote in content:
+        # Invalid tickers will have a None LastTradePriceOnly
+        if not quote['LastTradePriceOnly']:
+            continue
+        change = round(float(quote['Change']), 2)
+        price = round(float(quote['LastTradePriceOnly']), 2)
+        quotes_to_return[quote['Symbol']] = {
+            'change': change,
+            'change_percent': round((price / (price - change) - 1) * 100, 2),
+            'day_high': round(float(quote['DaysHigh']), 2),
+            'day_low': round(float(quote['DaysLow']), 2),
+            'name': quote['Name'],
+            'price': price,
+            'volume': int(quote['Volume']),
+            'year_high': round(float(quote['YearHigh']), 2),
+            'year_low': round(float(quote['YearLow']), 2)
         }
     return quotes_to_return
 
